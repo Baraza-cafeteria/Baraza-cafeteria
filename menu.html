@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baraza Cafeteria | Menu</title>
+
+  <style>
+    :root {
+      --green: #1e5631;
+      --green2: #327548;
+      --cream: #fff8e8;
+      --paper: #fffdf7;
+      --ink: #243329;
+      --muted: #68746b;
+      --line: #e6dfcc;
+      --red: #9b2c24;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    header {
+      background: var(--green);
+      color: white;
+      padding: 20px;
+    }
+
+    header .inner,
+    main {
+      width: min(1000px, 100%);
+      margin: auto;
+    }
+
+    header .inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.7rem;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      font-weight: 650;
+      margin-left: 14px;
+    }
+
+    main { padding: 24px 18px 48px; }
+
+    .notice {
+      padding: 12px 14px;
+      border-radius: 9px;
+      background: #edf5eb;
+      color: var(--green);
+      margin: 0 0 16px;
+    }
+
+    .notice.error {
+      background: #fff0ed;
+      color: var(--red);
+    }
+
+    .notice[hidden] { display: none; }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 16px #2433290b;
+    }
+
+    h2 {
+      color: var(--green);
+      font-size: 1.3rem;
+      margin: 0 0 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .food {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: white;
+    }
+
+    .food-image {
+      height: 145px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f2efdf, #e7eddf);
+      color: #718071;
+      text-align: center;
+      font-size: .9rem;
+    }
+
+    .food-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .food-details {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px;
+    }
+
+    .food-info { min-width: 0; }
+    .food-name { font-weight: 700; }
+
+    .food-category {
+      display: block;
+      color: var(--green);
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    .food-price,
+    .stock {
+      display: block;
+      color: var(--muted);
+      font-size: .9rem;
+      margin-top: 3px;
+    }
+
+    .stock.sold {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .quantity {
+      width: 70px;
+      padding: 8px;
+      border: 1px solid #c9d1c8;
+      border-radius: 7px;
+      font: inherit;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .quantity:disabled {
+      background: #eee;
+      cursor: not-allowed;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      margin-top: 18px;
+      padding-top: 16px;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .total strong {
+      color: var(--green);
+      font-size: 1.35rem;
+    }
+
+    button,
+    .button {
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 18px;
+      background: var(--green);
+      color: white;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 16px;
+    }
+
+    button:hover,
+    .button:hover {
+      background: var(--green2);
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .small {
+      font-size: .9rem;
+      color: var(--muted);
+      margin: 9px 0 0;
+    }
+
+    .empty { color: var(--muted); }
+    .hidden { display: none !important; }
+
+    @media (max-width: 560px) {
+      .panel { padding: 17px; }
+      .food-image { height: 130px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <h1>Baraza Cafeteria</h1>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/student.html">Student dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div id="status" class="notice" role="status" aria-live="polite">
+      Checking your student account…
+    </div>
+
+    <form id="orderForm">
+      <section class="panel">
+        <h2>Today's menu</h2>
+        <div id="menu" class="grid">
+          <p class="empty">Loading menu…</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 id="greeting">Your order</h2>
+
+        <p id="signInPrompt" class="small hidden">
+          Sign in or create your student account before ordering:
+          <a href="/student.html">Open student dashboard</a>.
+        </p>
+
+        <div class="total">
+          <span>Total</span>
+          <strong id="total">KSh 0.00</strong>
+        </div>
+
+        <button id="submitButton" type="submit" disabled>Place order</button>
+
+        <p class="small">
+          Your name and registration number are linked to your signed-in account.
+        </p>
+      </section>
+    </form>
+  </main>
+
+  <script>
+    const menuElement = document.getElementById("menu");
+    const statusElement = document.getElementById("status");
+    const totalElement = document.getElementById("total");
+    const submitButton = document.getElementById("submitButton");
+    const signInPrompt = document.getElementById("signInPrompt");
+
+    let foods = [];
+    let signedIn = false;
+    let requestKey = null;
+
+    function setStatus(message, error = false) {
+      statusElement.textContent = message;
+      statusElement.classList.toggle("error", error);
+      statusElement.hidden = !message;
+    }
+
+    function money(value) {
+      return "KSh " + Number(value || 0).toLocaleString("en-KE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function nameOf(food) {
+      return food.name || "Menu item";
+    }
+
+    function unitOf(food) {
+      const category = String(food.category || "").toLowerCase();
+      const name = nameOf(food).toLowerCase();
+
+      if (category === "lunch" || category === "fast food") {
+        return "per plate";
+      }
+
+      if (name === "tea") return "per cup";
+      if (name === "soda") return "per bottle";
+
+      return "per item";
+    }
+
+    function selectedItems() {
+      return [...menuElement.querySelectorAll(".quantity")]
+        .map(input => {
+          const quantity = Math.max(
+            0,
+            Math.min(Number(input.max) || 99, Math.floor(Number(input.value) || 0))
+          );
+
+          const food = foods[Number(input.dataset.index)];
+
+          return quantity > 0
+            ? { id: food.id, quantity, price: Number(food.price) }
+            : null;
+        })
+        .filter(Boolean);
+    }
+
+    function updateTotal() {
+      const sum = selectedItems().reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+      totalElement.textContent = money(sum);
+    }
+
+    function renderMenu() {
+      menuElement.replaceChildren();
+
+      if (!foods.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "There are no menu items available.";
+        menuElement.append(empty);
+        return;
+      }
+
+      foods.forEach((food, index) => {
+        const card = document.createElement("article");
+        card.className = "food";
+
+        const photo = document.createElement("div");
+        photo.className = "food-image";
+
+        if (food.image) {
+          const image = document.createElement("img");
+          image.src = food.image;
+          image.alt = nameOf(food);
+          image.onerror = () => {
+            photo.textContent = "Add your food photo";
+          };
+          photo.append(image);
+        } else {
+          photo.textContent = "Add your food photo";
+        }
+
+        const details = document.createElement("div");
+        details.className = "food-details";
+
+        const info = document.createElement("div");
+        info.className = "food-info";
+
+        const name = document.createElement("span");
+        name.className = "food-name";
+        name.textContent = nameOf(food);
+
+        const category = document.createElement("span");
+        category.className = "food-category";
+        category.textContent = food.category || "Other";
+
+        const price = document.createElement("span");
+        price.className = "food-price";
+        price.textContent = money(food.price) + " " + unitOf(food);
+
+        const stock = document.createElement("span");
+        stock.className = "stock";
+        stock.textContent = Number(food.stock) === 0
+          ? "Sold out"
+          : `${food.stock} available`;
+
+        if (Number(food.stock) === 0) {
+          stock.classList.add("sold");
+        }
+
+        info.append(name, category, price, stock);
+
+        const quantity = document.createElement("input");
+        quantity.className = "quantity";
+        quantity.type = "number";
+        quantity.min = "0";
+        quantity.max = String(Math.min(99, Number(food.stock) || 0));
+        quantity.value = "0";
+        quantity.step = "1";
+        quantity.inputMode = "numeric";
+        quantity.dataset.index = String(index);
+        quantity.setAttribute("aria-label", "Quantity of " + nameOf(food));
+        quantity.disabled = !signedIn || Number(food.stock) < 1;
+        quantity.addEventListener("input", updateTotal);
+
+        details.append(info, quantity);
+        card.append(photo, details);
+        menuElement.append(card);
+      });
+    }
+
+    async function loadMenu() {
+      try {
+        const response = await fetch("/api/menu");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Could not load menu.");
+        }
+
+        foods = data;
+        renderMenu();
+        updateTotal();
+      } catch (error) {
+        const message = document.createElement("p");
+        message.className = "empty";
+        message.textContent =
+          "Unable to load menu. Check that the backend is running.";
+        menuElement.replaceChildren(message);
+        setStatus(error.message, true);
+      }
+    }
+
+    async function checkStudent() {
+      try {
+        const response = await fetch("/api/student/profile");
+
+        if (!response.ok) {
+          throw new Error("Sign in required");
+        }
+
+        const data = await response.json();
+        signedIn = true;
+        document.getElementById("greeting").textContent =
+          "Welcome back, " + data.student.name + "!";
+        signInPrompt.classList.add("hidden");
+        submitButton.disabled = false;
+        setStatus("Choose your food and quantities. Stock is checked when your order is placed.");
+      } catch {
+        signedIn = false;
+        document.getElementById("greeting").textContent = "Your order";
+        signInPrompt.classList.remove("hidden");
+        submitButton.disabled = true;
+        setStatus("Please sign in to order.", true);
+      }
+
+      renderMenu();
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!signedIn) {
+        setStatus("Please sign in before placing an order.", true);
+        return;
+      }
+
+      const items = selectedItems();
+
+      if (!items.length) {
+        setStatus("Choose at least one available food item.", true);
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending order…";
+
+      if (!requestKey) {
+        requestKey = crypto.randomUUID();
+      }
+
+      try {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Idempotency-Key": requestKey
+          },
+          body: JSON.stringify({ items })
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(result.message || "Could not place the order.");
+        }
+
+        setStatus(
+          "Order placed successfully! Total: " +
+          money(result.order.total) +
+          ". Your order is in your student dashboard."
+        );
+
+        requestKey = null;
+        document.querySelectorAll(".quantity").forEach(input => {
+          input.value = "0";
+        });
+
+        updateTotal();
+        await loadMenu();
+      } catch (error) {
+        requestKey = null;
+        setStatus(error.message, true);
+        await loadMenu();
+      } finally {
+        submitButton.disabled = !signedIn;
+        submitButton.textContent = "Place order";
+      }
+    });
+
+    Promise.all([loadMenu(), checkStudent()]);
+  </script>
+</body>
+</html>

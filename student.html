@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baraza Cafeteria | Student Dashboard</title>
+  <style>
+    :root{--green:#1e5631;--green2:#327548;--cream:#fff8e8;--paper:#fffdf7;--ink:#243329;--muted:#68746b;--line:#e6dfcc;--red:#9b2c24}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+    header{background:var(--green);color:#fff;padding:22px 18px}header .inner,main{width:min(960px,100%);margin:auto}header h1{margin:0;font-size:1.8rem}header a{color:#e7f0e8;text-decoration:none}
+    main{padding:24px 18px 50px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 4px 16px #2433290b}h2{margin:0 0 14px;color:var(--green);font-size:1.3rem}
+    .notice{padding:12px 14px;border-radius:9px;background:#edf5eb;color:var(--green);margin-bottom:16px}.notice.error{background:#fff0ed;color:var(--red)}.notice[hidden]{display:none}
+    .tabs{display:flex;gap:10px;margin-bottom:16px}.tabs button{margin:0;background:#e8ecdf;color:var(--green)}.tabs button.active{background:var(--green);color:white}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field label{display:block;font-weight:600;margin-bottom:5px}.field input{width:100%;padding:11px 12px;border:1px solid #c9d1c8;border-radius:8px;font:inherit;background:#fff}.field.full{grid-column:1/-1}
+    .remember{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--muted);font-size:.95rem}.remember input{width:17px;height:17px}
+    button,.button{border:0;border-radius:8px;padding:11px 16px;background:var(--green);color:white;font:inherit;font-weight:650;cursor:pointer;text-decoration:none;display:inline-block}button:hover,.button:hover{background:var(--green2)}button:disabled{opacity:.6;cursor:wait}.muted{color:var(--muted)}
+    .profile{display:grid;grid-template-columns:140px 1fr;gap:22px;align-items:center}.avatar{width:132px;height:132px;border-radius:50%;object-fit:cover;background:#e8ecdf;border:3px solid white;box-shadow:0 2px 10px #24332920}.profile-name{font-size:1.5rem;font-weight:700;color:var(--green)}.profile-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.profile-actions input{max-width:250px}.order-list{display:grid;gap:12px}.order{border:1px solid var(--line);border-radius:10px;padding:14px;background:white}.order-top,.order-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.order-top strong{color:var(--green)}.order ul{margin:10px 0 8px;padding-left:22px}.status{font-weight:700}.empty{padding:22px;text-align:center;color:var(--muted);background:white;border-radius:10px}.hidden{display:none!important}
+    @media(max-width:600px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.profile{grid-template-columns:1fr;text-align:center}.avatar{margin:auto}.profile-actions{justify-content:center}.panel{padding:17px}}
+  </style>
+</head>
+<body>
+  <header><div class="inner"><h1>Baraza Cafeteria</h1><a href="/">Home</a> · <a href="/menu.html">Menu</a></div></header>
+  <main>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <section id="authPanel" class="panel">
+      <h2 id="authTitle">Welcome to your student account</h2>
+      <p class="muted">Sign in to see your profile and previous orders, or create an account once.</p>
+      <div class="tabs">
+        <button id="loginTab" class="active" type="button">Sign in</button>
+        <button id="registerTab" type="button">Create account</button>
+      </div>
+      <form id="authForm">
+        <div id="registerFields" class="form-grid hidden">
+          <div class="field full"><label for="name">Student name</label><input id="name" maxlength="100" autocomplete="name"></div>
+        </div>
+        <div class="form-grid">
+          <div class="field full"><label for="registrationNumber">Registration number</label><input id="registrationNumber" maxlength="40" autocomplete="username" required></div>
+          <div class="field full"><label for="password">Password</label><input id="password" type="password" minlength="8" autocomplete="current-password" required></div>
+        </div>
+        <label class="remember"><input id="rememberMe" type="checkbox"> Remember me on this device for 30 days</label>
+        <p id="registerHint" class="small muted hidden">Use a password with at least 8 characters. Your password is stored as a protected hash.</p>
+        <button id="authSubmit" type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="panel">
+        <h2>Your profile</h2>
+        <div class="profile">
+          <img id="avatar" class="avatar" alt="Student profile picture">
+          <div>
+            <div id="studentName" class="profile-name"></div>
+            <div id="studentReg" class="muted"></div>
+            <div class="profile-actions">
+              <label class="button" for="photoInput">Choose profile picture</label>
+              <input id="photoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+              <button id="savePhoto" type="button" disabled>Save picture</button>
+              <button id="logoutButton" type="button">Sign out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Previous orders</h2>
+        <div id="orders" class="order-list"><div class="empty">Loading your orders…</div></div>
+      </div>
+
+      <a class="button" href="/menu.html">Order from the menu</a>
+    </section>
+  </main>
+
+  <script>
+    const notice = document.getElementById("notice");
+    const authPanel = document.getElementById("authPanel");
+    const dashboard = document.getElementById("dashboard");
+    const authForm = document.getElementById("authForm");
+    const registerFields = document.getElementById("registerFields");
+    const registerHint = document.getElementById("registerHint");
+    const authSubmit = document.getElementById("authSubmit");
+    const ordersElement = document.getElementById("orders");
+    const photoInput = document.getElementById("photoInput");
+    const savePhoto = document.getElementById("savePhoto");
+    let mode = "login";
+    let pendingPhoto = null;
+
+    function showNotice(message, error = false) {
+      notice.textContent = message;
+      notice.classList.toggle("error", error);
+      notice.hidden = !message;
+    }
+
+    async function api(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        ...options,
+        headers: { Accept: "application/json", ...(options.headers || {}) }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || "The request could not be completed.");
+      return data;
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const registering = mode === "register";
+      document.getElementById("loginTab").classList.toggle("active", !registering);
+      document.getElementById("registerTab").classList.toggle("active", registering);
+      registerFields.classList.toggle("hidden", !registering);
+      registerHint.classList.toggle("hidden", !registering);
+      document.getElementById("name").required = registering;
+      document.getElementById("password").autocomplete = registering ? "new-password" : "current-password";
+      authSubmit.textContent = registering ? "Create account" : "Sign in";
+      document.getElementById("authTitle").textContent = registering ? "Create your student account" : "Welcome back";
+    }
+
+    function money(value) {
+      return "KSh " + Number(value || 0).toLocaleString("en-KE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function makeInitialAvatar(name) {
+      const letter = (name || "S").trim().charAt(0).toUpperCase();
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><rect width="100%" height="100%" fill="#e4edd5"/><text x="50%" y="56%" text-anchor="middle" font-size="64" font-family="Arial" fill="#1e5631">${letter}</text></svg>`;
+      return "data:image/svg+xml," + encodeURIComponent(svg);
+    }
+
+    function showDashboard(profile) {
+      authPanel.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      document.getElementById("studentName").textContent = "Welcome back, " + profile.name + "!";
+      document.getElementById("studentReg").textContent = "Registration number: " + profile.registrationNumber;
+      document.getElementById("avatar").src = profile.photo || makeInitialAvatar(profile.name);
+      loadOrders();
+    }
+
+    function renderOrders(orders) {
+      ordersElement.replaceChildren();
+      if (!orders.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "You don't have any saved orders yet. Your orders will appear here.";
+        ordersElement.append(empty);
+        return;
+      }
+
+      orders.forEach(order => {
+        const card = document.createElement("article");
+        card.className = "order";
+        const top = document.createElement("div");
+        top.className = "order-top";
+        const id = document.createElement("strong");
+        id.textContent = "Order #" + order.id;
+        const date = document.createElement("span");
+        date.className = "muted";
+        date.textContent = new Date(order.createdAt).toLocaleString();
+        top.append(id, date);
+
+        const list = document.createElement("ul");
+        (order.items || []).forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `${item.quantity} × ${item.name} — ${money(item.price * item.quantity)}`;
+          list.append(li);
+        });
+
+        const bottom = document.createElement("div");
+        bottom.className = "order-bottom";
+        const total = document.createElement("strong");
+        total.textContent = "Total: " + money(order.total);
+        const status = document.createElement("span");
+        status.className = "status";
+        status.textContent = "Status: " + order.status;
+        bottom.append(total, status);
+        card.append(top, list, bottom);
+        ordersElement.append(card);
+      });
+    }
+
+    async function loadOrders() {
+      try {
+        renderOrders(await api("/api/student/orders"));
+      } catch (error) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = error.message;
+        ordersElement.replaceChildren(empty);
+      }
+    }
+
+    document.getElementById("loginTab").addEventListener("click", () => setMode("login"));
+    document.getElementById("registerTab").addEventListener("click", () => setMode("register"));
+
+    authForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      authSubmit.disabled = true;
+      try {
+        const payload = {
+          registrationNumber: document.getElementById("registrationNumber").value,
+          password: document.getElementById("password").value,
+          rememberMe: document.getElementById("rememberMe").checked
+        };
+        if (mode === "register") payload.name = document.getElementById("name").value;
+
+        const result = await api(mode === "register" ? "/api/auth/register" : "/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        showNotice("Signed in successfully.");
+        showDashboard(result.student);
+      } catch (error) {
+        showNotice(error.message, true);
+      } finally {
+        authSubmit.disabled = false;
+      }
+    });
+
+    photoInput.addEventListener("change", () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) return showNotice("Choose an image file.", true);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement("canvas");
+          const side = Math.min(image.width, image.height, 500);
+          canvas.width = side;
+          canvas.height = side;
+          const context = canvas.getContext("2d");
+          const x = (image.width - side) / 2;
+          const y = (image.height - side) / 2;
+          context.drawImage(image, x, y, side, side, 0, 0, side, side);
+          pendingPhoto = canvas.toDataURL("image/jpeg", 0.82);
+          document.getElementById("avatar").src = pendingPhoto;
+          savePhoto.disabled = false;
+        };
+        image.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    savePhoto.addEventListener("click", async () => {
+      if (!pendingPhoto) return;
+      savePhoto.disabled = true;
+      try {
+        const result = await api("/api/student/profile", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ photo: pendingPhoto })
+        });
+        pendingPhoto = null;
+        document.getElementById("avatar").src = result.student.photo || makeInitialAvatar(result.student.name);
+        showNotice("Profile picture saved.");
+      } catch (error) {
+        savePhoto.disabled = false;
+        showNotice(error.message, true);
+      }
+    });
+
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+      try { await api("/api/auth/logout", { method: "POST" }); } catch {}
+      dashboard.classList.add("hidden");
+      authPanel.classList.remove("hidden");
+      authForm.reset();
+      setMode("login");
+      showNotice("You have signed out.");
+    });
+
+    api("/api/student/profile")
+      .then(result => showDashboard(result.student))
+      .catch(() => setMode("login"));
+  </script>
+</body>
+</html>

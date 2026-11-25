@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baraza Cafeteria | Good Food, Great Company</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f8f8f2;
+            color: #26352b;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        /* Navigation */
+        header {
+            background: #ffffff;
+            border-bottom: 3px solid #17613b;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            min-height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #155c38;
+        }
+
+        .logo-icon {
+            font-size: 36px;
+        }
+
+        .logo-text {
+            font-size: 25px;
+            font-weight: bold;
+            line-height: 1.1;
+        }
+
+        .logo-text span {
+            display: block;
+            font-size: 15px;
+            font-weight: normal;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #19804b;
+        }
+
+        .admin-btn {
+            background: #155c38;
+            color: white !important;
+            padding: 10px 18px;
+            border-radius: 25px;
+        }
+
+        .admin-btn:hover {
+            background: #23764c;
+        }
+
+        .menu-toggle {
+            display: none;
+            border: none;
+            background: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #155c38;
+        }
+
+        /* Hero section */
+        .hero {
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(10, 58, 32, 0.92),
+                    rgba(10, 58, 32, 0.65),
+                    rgba(10, 58, 32, 0.10)
+                ),
+                url("https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1600&q=85");
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            padding: 70px 0;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 6vw, 65px);
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: #f5c342;
+        }
+
+        .hero-subtitle {
+            font-size: 23px;
+            font-weight: bold;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            max-width: 500px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #f5c342;
+            color: #183b25;
+        }
+
+        .btn-primary:hover {
+            background: #ffda70;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            border: 2px solid white;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #155c38;
+        }
+
+        /* Highlights */
+        .highlights {
+            background: #edf2df;
+            padding: 25px 0;
+        }
+
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .highlight {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            border-right: 1px solid #c5d3bb;
+            padding: 10px;
+        }
+
+        .highlight:last-child {
+            border-right: none;
+        }
+
+        .highlight-icon {
+            font-size: 35px;
+        }
+
+        .highlight h3 {
+            color: #155c38;
+            font-size: 17px;
+        }
+
+        /* About section */
+        .about-section {
+            padding: 70px 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 0.9fr;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 34px;
+            color: #155c38;
+            margin-bottom: 15px;
+        }
+
+        .about-text p {
+            color: #59675d;
+            margin-bottom: 15px;
+        }
+
+        .about-image {
+            height: 300px;
+            border-radius: 12px;
+            background-image: url(
+                "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=85"
+            );
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Opening hours */
+        .hours-box {
+            background: #e4edd5;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .hours-box h2 {
+            color: #155c38;
+            margin-bottom: 20px;
+        }
+
+        .hours-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #c8d8bd;
+            font-size: 14px;
+        }
+
+        .hours-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Contact section */
+        .contact-section {
+            background: #ffffff;
+            padding: 65px 0;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            color: #155c38;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .contact-section > .container > p {
+            color: #647067;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 35px;
+        }
+
+        .contact-card {
+            background: #f5f6ef;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .contact-card h3 {
+            color: #155c38;
+            margin-bottom: 10px;
+        }
+
+        .contact-card a {
+            color: #155c38;
+            text-decoration: underline;
+            overflow-wrap: anywhere;
+        }
+
+        .contact-card a:hover {
+            color: #19804b;
+        }
+
+        /* Footer */
+        footer {
+            background: #12452d;
+            color: white;
+            padding: 25px 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        footer p {
+            color: #d7e5d9;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: #e5eddf;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: #f5c342;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 900px) {
+            .about-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .about-text {
+                grid-column: 1 / -1;
+            }
+
+            .highlight-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .highlight:nth-child(2) {
+                border-right: none;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                min-height: 70px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 25px 5%;
+                gap: 20px;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hero {
+                min-height: 450px;
+                background-position: center;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero-subtitle {
+                font-size: 19px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .btn {
+                margin: 5px 0;
+            }
+
+            .btn-secondary {
+                margin-left: 0;
+            }
+
+            .highlight-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .highlight {
+                border-right: none;
+                justify-content: flex-start;
+            }
+
+            .highlight h3 {
+                font-size: 14px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-image {
+                height: 250px;
+            }
+
+            .hours-box {
+                padding: 18px;
+            }
+
+            .hours-row {
+                font-size: 12px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="#home" class="logo">
+                <div class="logo-icon">☕</div>
+                <div class="logo-text">
+                    Baraza
+                    <span>Cafeteria</span>
+                </div>
+            </a>
+
+            <button class="menu-toggle" id="menuToggle" type="button"
+                    aria-label="Open navigation menu">
+                ☰
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="menu.html">Menu</a></li>
+                <li><a href="student.html">Student Dashboard</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="admin.html" class="admin-btn">Admin Login</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Welcome to<br><span>Baraza Cafeteria</span></h1>
+                <div class="hero-subtitle">Good Food. Great Company.</div>
+
+                <p>
+                    Enjoy delicious and affordable meals in a friendly campus
+                    environment. Your perfect place to relax, recharge and
+                    connect with friends.
+                </p>
+
+                <a href="menu.html" class="btn btn-primary">Explore Our Menu →</a>
+                <a href="#about" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="highlights">
+        <div class="container highlight-grid">
+            <div class="highlight">
+                <div class="highlight-icon">🍴</div>
+                <h3>Affordable<br>Meals</h3>
+            </div>
+
+            <div class="highlight">
+                <div class="highlight-icon">👥</div>
+                <h3>Friendly<br>Atmosphere</h3>
+            </div>
+
+            <div class="highlight">
+                <div class="highlight-icon">🕒</div>
+                <h3>Convenient<br>Location</h3>
+            </div>
+
+            <div class="highlight">
+                <div class="highlight-icon">✓</div>
+                <h3>Clean &amp; Safe<br>Environment</h3>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section" id="about">
+        <div class="container about-grid">
+            <div class="about-text">
+                <h2>About Baraza</h2>
+
+                <p>
+                    Baraza Cafeteria is a welcoming place where students,
+                    staff and visitors can relax, recharge and enjoy meals.
+                </p>
+
+                <p>
+                    We are committed to serving our customers with quality
+                    food, friendly service and affordable prices.
+                </p>
+
+                <a href="#contact" class="btn btn-primary">Contact Us</a>
+            </div>
+
+            <div class="about-image"></div>
+
+            <div class="hours-box">
+                <h2>🕒 Opening Hours</h2>
+
+                <div class="hours-row">
+                    <span>Monday – Friday</span>
+                    <span>7:00 AM – 8:00 PM</span>
+                </div>
+
+                <div class="hours-row">
+                    <span>Saturday</span>
+                    <span>8:00 AM – 6:00 PM</span>
+                </div>
+
+                <div class="hours-row">
+                    <span>Sunday</span>
+                    <span>8:00 AM – 6:00 PM</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <h2>Visit Baraza Cafeteria</h2>
+
+            <p>We look forward to serving you. Come enjoy a meal with us!</p>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <h3>📍 Location</h3>
+                    <p>
+                        Tharaka University<br>
+                        Tharaka Nithi County, Kenya
+                    </p>
+                </div>
+
+                <div class="contact-card">
+                    <h3>📞 Contact</h3>
+                    <p><a href="tel:+254724416847">0724416847</a></p>
+                </div>
+
+                <div class="contact-card">
+                    <h3>✉️ Email</h3>
+                    <p>
+                        <a href="mailto:Karibu.BarazaCafe@gmail.com">
+                            Karibu.BarazaCafe@gmail.com
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <h3>☕ Baraza Cafeteria</h3>
+                <p>Good Food. Great Company.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="menu.html">Menu</a>
+                <a href="student.html">Student Dashboard</a>
+                <a href="#contact">Contact</a>
+                <a href="admin.html">Admin</a>
+            </div>
+
+            <p>© 2026 Baraza Cafeteria. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const navLinks = document.getElementById("navLinks");
+
+        menuToggle.addEventListener("click", function() {
+            navLinks.classList.toggle("active");
+        });
+
+        navLinks.querySelectorAll("a").forEach(function(link) {
+            link.addEventListener("click", function() {
+                navLinks.classList.remove("active");
+            });
+        });
+    </script>
+</body>
+</html>

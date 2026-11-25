@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baraza Cafeteria | Admin</title>
+
+  <style>
+    :root {
+      --green: #1e5631;
+      --green2: #327548;
+      --cream: #fff8e8;
+      --paper: #fffdf7;
+      --ink: #243329;
+      --muted: #68746b;
+      --line: #e6dfcc;
+      --red: #9b2c24;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    header {
+      background: var(--green);
+      color: #fff;
+      padding: 22px 18px;
+    }
+
+    header .inner,
+    main {
+      width: min(1050px, 100%);
+      margin: auto;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    header a {
+      color: #e7f0e8;
+      text-decoration: none;
+    }
+
+    main { padding: 24px 18px 50px; }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 16px #2433290b;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      color: var(--green);
+      font-size: 1.3rem;
+    }
+
+    .notice {
+      padding: 12px 14px;
+      border-radius: 9px;
+      background: #edf5eb;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+
+    .notice.error {
+      background: #fff0ed;
+      color: var(--red);
+    }
+
+    .notice[hidden],
+    .hidden {
+      display: none !important;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .field input {
+      width: 100%;
+      max-width: 440px;
+      padding: 11px 12px;
+      border: 1px solid #c9d1c8;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      background: var(--green);
+      color: white;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover { background: var(--green2); }
+    button:disabled { opacity: .6; cursor: wait; }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .inventory,
+    .orders {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item,
+    .order {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .item-name { font-weight: 700; }
+    .muted { color: var(--muted); font-size: .92rem; }
+
+    .stock-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .stock-form input {
+      width: 90px;
+      padding: 8px;
+      border: 1px solid #c9d1c8;
+      border-radius: 7px;
+      font: inherit;
+    }
+
+    .order-head,
+    .order-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .order ul {
+      margin: 8px 0;
+      padding-left: 22px;
+    }
+
+    .order select {
+      padding: 8px;
+      border: 1px solid #c9d1c8;
+      border-radius: 7px;
+      font: inherit;
+    }
+
+    .empty {
+      padding: 20px;
+      text-align: center;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+    }
+
+    .section-note {
+      margin: -5px 0 14px;
+      color: var(--muted);
+      font-size: .93rem;
+    }
+
+    @media (max-width: 640px) {
+      .item { grid-template-columns: 1fr; }
+      .stock-form input { flex: 1; }
+      .panel { padding: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <h1>Baraza Cafeteria · Admin</h1>
+      <a href="/">Home</a> ·
+      <a href="/menu.html">Menu</a>
+    </div>
+  </header>
+
+  <main>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <section id="loginPanel" class="panel">
+      <h2>Admin sign in</h2>
+      <p class="section-note">Use the admin password configured in the backend terminal.</p>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="adminPassword">Admin password</label>
+          <input
+            id="adminPassword"
+            type="password"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <button id="loginButton" type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <div id="adminArea" class="hidden">
+      <div class="toolbar">
+        <p class="muted">Set the number of portions currently available for each food.</p>
+        <button id="logoutButton" type="button">Sign out</button>
+      </div>
+
+      <section class="panel">
+        <h2>Menu stock</h2>
+        <p class="section-note">
+          Set stock to 0 to mark an item sold out. The backend checks stock when students order.
+        </p>
+        <div id="inventory" class="inventory"></div>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <h2>Student orders</h2>
+          <button id="refreshButton" type="button">Refresh orders</button>
+        </div>
+        <div id="orders" class="orders"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const notice = document.getElementById("notice");
+    const loginPanel = document.getElementById("loginPanel");
+    const adminArea = document.getElementById("adminArea");
+    const inventory = document.getElementById("inventory");
+    const ordersElement = document.getElementById("orders");
+
+    const statuses = [
+      "Pending",
+      "Preparing",
+      "Ready",
+      "Completed",
+      "Cancelled"
+    ];
+
+    function showMessage(text, error = false) {
+      notice.textContent = text;
+      notice.classList.toggle("error", error);
+      notice.hidden = !text;
+    }
+
+    async function api(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        ...options,
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        }
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "The request could not be completed.");
+      }
+
+      return data;
+    }
+
+    function money(value) {
+      return "KSh " + Number(value || 0).toLocaleString("en-KE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    async function loadAdminData() {
+      try {
+        const [menu, orders] = await Promise.all([
+          api("/api/admin/menu"),
+          api("/api/admin/orders")
+        ]);
+
+        renderInventory(menu);
+        renderOrders(orders);
+        showMessage("");
+      } catch (error) {
+        if (
+          error.message.includes("sign in") ||
+          error.message.includes("session")
+        ) {
+          adminArea.classList.add("hidden");
+          loginPanel.classList.remove("hidden");
+        }
+
+        showMessage(error.message, true);
+      }
+    }
+
+    function showAdminArea() {
+      loginPanel.classList.add("hidden");
+      adminArea.classList.remove("hidden");
+      loadAdminData();
+    }
+
+    function renderInventory(items) {
+      inventory.replaceChildren();
+
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No menu items found.";
+        inventory.append(empty);
+        return;
+      }
+
+      items.forEach(food => {
+        const card = document.createElement("div");
+        card.className = "item";
+
+        const info = document.createElement("div");
+
+        const name = document.createElement("div");
+        name.className = "item-name";
+        name.textContent = food.name;
+
+        const detail = document.createElement("div");
+        detail.className = "muted";
+        detail.textContent =
+          `${food.category} · ${money(food.price)} · ${food.stock} available`;
+
+        info.append(name, detail);
+
+        const form = document.createElement("form");
+        form.className = "stock-form";
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.min = "0";
+        input.max = "100000";
+        input.step = "1";
+        input.value = food.stock;
+        input.setAttribute(
+          "aria-label",
+          "Available portions for " + food.name
+        );
+
+        const button = document.createElement("button");
+        button.type = "submit";
+        button.textContent = "Save stock";
+
+        form.append(input, button);
+
+        form.addEventListener("submit", async event => {
+          event.preventDefault();
+          button.disabled = true;
+
+          try {
+            await api(`/api/admin/menu/${food.id}/stock`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ stock: Number(input.value) })
+            });
+
+            detail.textContent =
+              `${food.category} · ${money(food.price)} · ${input.value} available`;
+
+            showMessage(`${food.name} stock updated.`);
+          } catch (error) {
+            showMessage(error.message, true);
+          } finally {
+            button.disabled = false;
+          }
+        });
+
+        card.append(info, form);
+        inventory.append(card);
+      });
+    }
+
+    function renderOrders(orders) {
+      ordersElement.replaceChildren();
+
+      if (!orders.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No orders yet.";
+        ordersElement.append(empty);
+        return;
+      }
+
+      orders.forEach(order => {
+        const card = document.createElement("article");
+        card.className = "order";
+
+        const head = document.createElement("div");
+        head.className = "order-head";
+
+        const student = document.createElement("strong");
+        student.textContent =
+          `${order.studentName} · ${order.registrationNumber}`;
+
+        const date = document.createElement("span");
+        date.className = "muted";
+        date.textContent =
+          `#${order.id} · ${new Date(order.createdAt).toLocaleString()}`;
+
+        head.append(student, date);
+
+        const list = document.createElement("ul");
+
+        (order.items || []).forEach(item => {
+          const line = document.createElement("li");
+          line.textContent =
+            `${item.quantity} × ${item.name} — ${money(item.price * item.quantity)}`;
+          list.append(line);
+        });
+
+        const foot = document.createElement("div");
+        foot.className = "order-foot";
+
+        const total = document.createElement("strong");
+        total.textContent = "Total: " + money(order.total);
+
+        const controls = document.createElement("div");
+
+        const select = document.createElement("select");
+        select.setAttribute("aria-label", "Order status");
+
+        statuses.forEach(status => {
+          const option = document.createElement("option");
+          option.value = status;
+          option.textContent = status;
+          select.append(option);
+        });
+
+        select.value = order.status;
+
+        const updateButton = document.createElement("button");
+        updateButton.type = "button";
+        updateButton.textContent = "Update status";
+        updateButton.style.marginLeft = "8px";
+
+        updateButton.addEventListener("click", async () => {
+          updateButton.disabled = true;
+
+          try {
+            await api(`/api/admin/orders/${order.id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status: select.value })
+            });
+
+            showMessage(`Order #${order.id} updated to ${select.value}.`);
+          } catch (error) {
+            showMessage(error.message, true);
+          } finally {
+            updateButton.disabled = false;
+          }
+        });
+
+        controls.append(select, updateButton);
+        foot.append(total, controls);
+        card.append(head, list, foot);
+        ordersElement.append(card);
+      });
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const button = document.getElementById("loginButton");
+      button.disabled = true;
+
+      try {
+        await api("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            password: document.getElementById("adminPassword").value
+          })
+        });
+
+        document.getElementById("loginForm").reset();
+        showAdminArea();
+        showMessage("Admin signed in.");
+      } catch (error) {
+        showMessage(error.message, true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    document
+      .getElementById("refreshButton")
+      .addEventListener("click", loadAdminData);
+
+    document
+      .getElementById("logoutButton")
+      .addEventListener("click", async () => {
+        try {
+          await api("/api/admin/logout", { method: "POST" });
+        } catch {}
+
+        adminArea.classList.add("hidden");
+        loginPanel.classList.remove("hidden");
+        showMessage("Admin signed out.");
+      });
+
+    async function checkAdminSession() {
+      try {
+        await api("/api/admin/menu");
+        showAdminArea();
+      } catch {
+        loginPanel.classList.remove("hidden");
+      }
+    }
+
+    checkAdminSession();
+  </script>
+</body>
+</html>

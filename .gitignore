@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+
+Backend/*.db
+Backend/*.db-shm
+Backend/*.db-wal
+Backend/orders.json

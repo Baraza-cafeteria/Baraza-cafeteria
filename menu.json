@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "Chapati",
+    "price": 20,
+    "category": "Breakfast"
+  },
+  {
+    "id": 2,
+    "name": "Beans",
+    "price": 50,
+    "category": "Lunch"
+  },
+  {
+    "id": 3,
+    "name": "Rice",
+    "price": 50,
+    "category": "Lunch"
+  },
+  {
+    "id": 4,
+    "name": "Ugali",
+    "price": 30,
+    "category": "Lunch"
+  },
+  {
+    "id": 5,
+    "name": "Ndengu",
+    "price": 50,
+    "category": "Lunch"
+  },
+  {
+    "id": 6,
+    "name": "Githeri",
+    "price": 50,
+    "category": "Lunch"
+  },
+  {
+    "id": 7,
+    "name": "Chips",
+    "price": 100,
+    "category": "Fast Food"
+  },
+  {
+    "id": 8,
+    "name": "Tea",
+    "price": 20,
+    "category": "Beverages"
+  },
+  {
+    "id": 9,
+    "name": "Soda",
+    "price": 60,
+    "category": "Beverages"
+  },
+  {
+    "id": 10,
+    "name": "Sausage",
+    "price": 50,
+    "category": "Snacks"
+  },
+  {
+    "id": 11,
+    "name": "Mandazi",
+    "price": 20,
+    "category": "Snacks"
+  },
+  {
+    "id": 12,
+    "name": "Eggs",
+    "price": 30,
+    "category": "Breakfast"
+  },
+  {
+    "id": 13,
+    "name": "Pilau",
+    "price": 150,
+    "category": "Lunch"
+  },
+  {
+    "id": 14,
+    "name": "Chicken",
+    "price": 200,
+    "category": "Lunch"
+  },
+  {
+    "id": 15,
+    "name": "Beef Stew",
+    "price": 150,
+    "category": "Lunch"
+  },
+  {
+    "id": 1795465034733,
+    "name": "Samosa",
+    "price": 30,
+    "category": "Snacks"
+  }
+]
